@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<script>if (/[?&]innebygd=1/.test(location.search)) document.documentElement.classList.add('innebygd');</script>
+<title>Hverdagshelten – prøv appen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Modellen er den ekte appen, bygget for nettleseren med eksempeldata. Ingenting blir sendt. */
+:root{ --side:#EFE9E3; --lilla:#52395E; --lilla-mork:#3E2A48; --lavendel:#BCA3D8; --krem:#FFE7CE; --tekst:#2B2230; --dempet:#6E6274; color-scheme:light; }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--side);color:var(--tekst);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;
+  padding:20px max(16px,env(safe-area-inset-left,0px)) 24px max(16px,env(safe-area-inset-right,0px))}
+.innebygd body{background:transparent;padding:4px 8px 8px}
+button{font:inherit;cursor:pointer;border:0;background:none;padding:0;color:inherit}
+button:focus-visible,a:focus-visible{outline:3px solid var(--lavendel);outline-offset:2px}
+.ramme{max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+h1{font-size:24px;margin:0;text-align:center;color:var(--lilla-mork)}
+.innebygd h1{display:none}
+.bryter{display:grid;grid-template-columns:1fr 1fr;background:#E2D8CF;border-radius:999px;padding:4px;gap:4px}
+.bryter button{border-radius:999px;padding:9px 8px;font-weight:700;font-size:15px;color:var(--dempet);line-height:1.2}
+.bryter button small{display:block;font-weight:400;font-size:12px}
+.bryter button[aria-pressed="true"]{background:var(--lilla);color:#fff}
+.telefon{background:#FFF7EF;border:8px solid #1E1A21;border-radius:40px;overflow:hidden;
+  height:min(760px,calc(100dvh - 150px));min-height:560px;box-shadow:0 18px 40px rgba(62,47,75,.18)}
+.innebygd .telefon{height:760px}
+.telefon iframe{display:block;width:100%;height:100%;border:0;background:#FFF7EF}
+.under{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:var(--dempet)}
+.under p{margin:0}
+.under button{font-weight:700;color:var(--lilla);text-decoration:underline;white-space:nowrap;font-size:13px}
+</style>
+</head>
+<body>
+<main class="ramme">
+  <h1>Prøv Hverdagshelten</h1>
+  <div class="bryter" role="group" aria-label="Velg hvem du vil være">
+    <button type="button" data-rolle="eldre" aria-pressed="true">Jeg trenger hjelp<small>Kari, 81 år</small></button>
+    <button type="button" data-rolle="ungdom" aria-pressed="false">Jeg vil hjelpe<small>Jonas, 16 år</small></button>
+  </div>
+  <div class="telefon">
+    <iframe id="app" title="Hverdagshelten-appen" src="app/?rolle=eldre"></iframe>
+  </div>
+  <div class="under">
+    <p>Legg ut en annonse som Kari, og bytt til Jonas for å takke ja. Alt er eksempler, og ingenting blir sendt.</p>
+    <button type="button" id="nullstill">Start på nytt</button>
+  </div>
+</main>
+<script>
+(function () {
+  var app = document.getElementById('app');
+  var knapper = document.querySelectorAll('.bryter button');
+  var rolle = 'eldre';
+  try { rolle = sessionStorage.getItem('modell-rolle') || 'eldre'; } catch (e) {}
+  function vis(ny, ekstra) {
+    rolle = ny;
+    try { sessionStorage.setItem('modell-rolle', ny); } catch (e) {}
+    knapper.forEach(function (k) { k.setAttribute('aria-pressed', String(k.dataset.rolle === ny)); });
+    app.src = 'app/?rolle=' + ny + (ekstra || '') + '&t=' + Date.now();
+  }
+  knapper.forEach(function (k) { k.addEventListener('click', function () { vis(k.dataset.rolle); }); });
+  document.getElementById('nullstill').addEventListener('click', function () { vis(rolle, '&nullstill=1'); });
+  if (rolle !== 'eldre') vis(rolle);
+})();
+</script>
+</body>
+</html>
