@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hverdagshelten-ub.github.io/hverdagshelten-nettside/sitemap.xml
